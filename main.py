@@ -45,15 +45,48 @@ def pad(x,y):
     return x,y
 
 def quadratic_multiply(x, y):
-    ### TODO
-    pass
-    ###
 
+    xvec = x.binary_vec
+    yvec = y.binary_vec
 
+    print(xvec, yvec)
 
+    if x.decimal_val <= 1 and y.decimal_val <= 1:
+      return BinaryNumber(x.decimal_val * y.decimal_val)
+
+    xvec, yvec = pad(xvec, yvec)
+
+    n = len(xvec)
+  
+    xL, xR = split_number(xvec)
+    yL, yR = split_number(yvec)
+
+    #xL, xR = xL.binary_vec, xR.binary_vec 
+    #yL, yR = yL.binary_vec, yR.binary_vec 
+
+    # recusrion function
+    #left = 2^n * xL * yL
+    #mid = 2^(n /2) * (xL * yR + xR * yL)
+    #right = xR * yR
+
+    left = quadratic_multiply(xL, yL)
+  
+    mid_left = quadratic_multiply(xL, yR)
+    mid_right = quadratic_multiply(xR, yL)
+    mid = BinaryNumber(mid_left.decimal_val + mid_right.decimal_val)
+    mid = bit_shift(mid, len(xvec)//2) 
+
+    left = bit_shift(left, len(xvec))
+  
+    right = quadratic_multiply(xR, yR)
+
+    return BinaryNumber(left.decimal_val + mid.decimal_val + right.decimal_val)
+  
 ## Feel free to add your own tests here.
 def test_multiply():
-    assert quadratic_multiply(BinaryNumber(2), BinaryNumber(2)) == 2*2
+    assert quadratic_multiply(BinaryNumber(2), BinaryNumber(2)).decimal_val == 2*2
+  
+    assert quadratic_multiply(BinaryNumber(3), BinaryNumber(5)).decimal_val == 3*5
     
     
 def time_multiply(x, y, f):
@@ -61,6 +94,7 @@ def time_multiply(x, y, f):
     # multiply two numbers x, y using function f
     return (time.time() - start)*1000
 
+test_multiply()
 
     
     
